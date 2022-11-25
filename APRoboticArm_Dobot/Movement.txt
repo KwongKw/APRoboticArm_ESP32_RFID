@@ -1,0 +1,39 @@
+finished = None
+Count = None
+i = None
+j = None
+xNow = None
+yNow = None
+zNow = None
+
+
+dType.SetIOMultiplexingEx(api, 1, 3, 1)
+finished = False
+Count = 0
+while not finished:
+  for i in range(4):
+    dType.SetPTPCmdEx(api, 0, 180,  (i * 40 + -20),  (-50), 0, 1)
+    for j in range(11):
+      dType.SetPTPCmdEx(api, 7, 10,  0,  0, 0, 1)
+      print(dType.GetIODI(api, 1)[0])
+      if (dType.GetIODI(api, 1)[0]) == 1:
+        xNow = dType.GetPoseEx(api, 1)
+        yNow = dType.GetPoseEx(api, 2)
+        zNow = dType.GetPoseEx(api, 3)
+        dType.SetPTPCmdEx(api, 7, 0,  0,  20, 0, 1)
+        dType.dSleep(500)
+        dType.SetPTPCmdEx(api, 7, 35,  0,  0, 0, 1)
+        dType.dSleep(500)
+        dType.SetPTPCmdEx(api, 7, 0,  0,  (-35), 0, 1)
+        dType.dSleep(1000)
+        dType.SetEndEffectorSuctionCupEx(api, 1, 1)
+        dType.SetPTPCmdEx(api, 7, 0,  0,  50, 0, 1)
+        dType.dSleep(500)
+        dType.SetPTPCmdEx(api, 0, (-40),  220,  (-45), 0, 1)
+        dType.SetPTPCmdEx(api, 7, (Count * 50),  0,  (-10), 0, 1)
+        dType.SetEndEffectorSuctionCupEx(api, 0, 1)
+        dType.dSleep(500)
+        dType.SetPTPCmdEx(api, 0, xNow,  yNow,  zNow, 0, 1)
+        dType.dSleep(1000)
+        Count = Count + 1
+  finished = True
